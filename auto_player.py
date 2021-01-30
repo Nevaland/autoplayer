@@ -81,7 +81,11 @@ if __name__ == "__main__":
     options.add_experimental_option("excludeSwitches" , ["enable-automation"])
 
     # Connect page
-    driver = webdriver.Chrome(executable_path="chromedriver", chrome_options=options)
+    if getattr(sys, 'frozen', False):
+        chromedriver_path = os.path.join(sys._MEIPASS, "chromedriver.exe")
+        driver = webdriver.Chrome(executable_path=chromedriver_path, chrome_options=options)
+    else:
+        driver = webdriver.Chrome(executable_path="chromedriver", chrome_options=options)
     driver.get(url=conf.values["page_url"])
     driver.implicitly_wait(10)
 
