@@ -1,0 +1,1 @@
+pyinstaller --onefile --add-binary "chromedriver.exe";"." auto_player.py
