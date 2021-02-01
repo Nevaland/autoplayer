@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
     while(True):
         # Initial Scrolling for load
-        driver.execute_script("window.scrollTo(0, 100)") 
+        driver.execute_script("window.scrollTo(0, 200)") 
 
         # Search the location of the video
         video_iframe_indexs = list()
@@ -163,5 +163,3 @@ if __name__ == "__main__":
 
         driver.execute_script("arguments[0].click();", next_page)
         time.sleep(5)
-
-
