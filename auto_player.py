@@ -77,6 +77,7 @@ if __name__ == "__main__":
         sys.exit(0)
 
     options = webdriver.ChromeOptions()
+    options.add_experimental_option("excludeSwitches", ["enable-loggin"])
     options.add_experimental_option('useAutomationExtension', False)
     options.add_experimental_option("excludeSwitches" , ["enable-automation"])
 
