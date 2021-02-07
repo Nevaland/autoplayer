@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     while(True):
         # Initial Scrolling for load
-        driver.execute_script("window.scrollTo(0, 200)") 
+        driver.execute_script("window.scrollTo(0, window.scrollY + 200);")
 
         # Search the location of the video
         video_iframe_indexs = list()
@@ -130,7 +130,10 @@ if __name__ == "__main__":
             btn_play = driver.find_element_by_xpath('//*[@id="customCover"]/button/span')
             action = ActionChains(driver)
             action.move_to_element(btn_play).perform()
-            btn_play.click()
+            try:
+                btn_play.click()
+            except:
+                driver.execute_script("window.scrollTo(0, window.scrollY + 400);")
 
             # TODO: Select play time point
             
