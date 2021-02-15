@@ -73,6 +73,13 @@ def save_settings(conf, update_data):
     conf.export(SETTINGS_FN)
 
 
+def error_logging(at_message, e):
+    import datetime
+    date = format(datetime.datetime.now(), "[%m.%d %H:%M]")
+    with open("error_log.txt", 'a') as f:
+        f.write(date + " " + str(e) + at_message)
+
+
 if __name__ == "__main__":
     # Load Settings
     conf = load_settings()
@@ -102,6 +109,7 @@ if __name__ == "__main__":
             "return document.body.scrollHeight")
         driver.execute_script(
             "window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(1)
 
         # Search the location of the video
         video_iframe_indexs = list()
@@ -137,11 +145,16 @@ if __name__ == "__main__":
             driver.switch_to_frame(iframes[video_iframe_indexs[i]])
 
             # Play the video
-            btn_play = driver.find_element_by_xpath(
-                '//*[@id="customCover"]/button/span')
-            action = ActionChains(driver)
-            action.move_to_element(btn_play).perform()
-            btn_play.click()
+            while True:
+                try:
+                    btn_play = driver.find_element_by_xpath(
+                        '//*[@id="customCover"]/button/span')
+                    action = ActionChains(driver)
+                    action.move_to_element(btn_play).perform()
+                    btn_play.click()
+                except Exception as e:
+                    error_logging("@Play the video", e)
+                    input("[-] PAUSE. Retry?:")
 
             # TODO: Select play time point
 
@@ -165,15 +178,28 @@ if __name__ == "__main__":
                     break
 
             # Next Video
-            driver.execute_script("arguments[0].click();", btn_full)
-            driver.switch_to_default_content()
+            try:
+                driver.execute_script("arguments[0].click();", btn_full)
+                driver.switch_to_default_content()
+            except Exception as e:
+                error_logging("@Next Video", e)
+                input("[-] PAUSE. Please Close Full screen, Ready?:")
 
         # Next Page
-        next_page = driver.find_element_by_xpath(
-            '//*[@id="main"]/div/div[1]/ul/li/div/div/div[2]/div/p[32]/span/a')
+        try:
+            next_page = driver.find_element_by_xpath(
+                '//*[@id="main"]/div/div[1]/ul/li/div/div/div[2]/div/p[32]/span/a')
 
-        conf.values["episode_part"] = 1
-        conf.values["page_url"] = next_page.text
+            conf.values["episode_part"] = 1
+            conf.values["page_url"] = next_page.text
 
-        driver.execute_script("arguments[0].click();", next_page)
-        time.sleep(5)
+            driver.execute_script("arguments[0].click();", next_page)
+            time.sleep(5)
+        except Exception as e:
+            URL = conf.values["page_url"]
+            URL = URL[:URL.rfind('/') + 1] + \
+                str(int(URL[URL.rfind('/') + 1:])+1)
+            driver.get(url=URL)
+
+            error_logging("@Next Page (" + URL + ")", e)
+            time.sleep(5)
