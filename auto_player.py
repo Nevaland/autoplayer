@@ -103,7 +103,7 @@ if __name__ == "__main__":
     driver.get(url=conf.values["page_url"])
     driver.implicitly_wait(10)
 
-    while(True):
+    while True:
         # Initial Scrolling for load
         last_height = driver.execute_script(
             "return document.body.scrollHeight")
@@ -126,14 +126,14 @@ if __name__ == "__main__":
                 driver.switch_to_default_content()
 
         video_cnt = len(video_iframe_indexs)
-        if VIDEO_MAX != video_cnt:
-            print("[-] The Number of Videos is not " +
-                  str(VIDEO_MAX) + ". (" + str(video_cnt) + ")")
-            sys.exit(0)
+        # if VIDEO_MAX != video_cnt:
+        #     print("[-] The Number of Videos is not " +
+        #           str(VIDEO_MAX) + ". (" + str(video_cnt) + ")")
+        #     sys.exit(0)
 
         # Play video start point to end
         start_episode_part = conf.values["episode_part"]
-        for i in range(start_episode_part - 1, VIDEO_MAX):
+        for i in range(start_episode_part - 1, video_cnt):
             # Save settings
             data = {
                 "page_url": conf.values["page_url"],
@@ -152,9 +152,10 @@ if __name__ == "__main__":
                     action = ActionChains(driver)
                     action.move_to_element(btn_play).perform()
                     btn_play.click()
+                    break
                 except Exception as e:
                     error_logging("@Play the video", e)
-                    input("[-] PAUSE. Retry?:")
+                    input("[-] Play PAUSE. Retry?:")
 
             # TODO: Select play time point
 
@@ -168,7 +169,7 @@ if __name__ == "__main__":
             # Detect end time
             time_point = driver.find_element_by_xpath(
                 '//*[@id="playProgress"]')
-            while(True):
+            while True:
                 time.sleep(5)
                 time_style = time_point.get_attribute("style")
                 time_float = float(time_style[len("width: "): -2])
@@ -183,7 +184,7 @@ if __name__ == "__main__":
                 driver.switch_to_default_content()
             except Exception as e:
                 error_logging("@Next Video", e)
-                input("[-] PAUSE. Please Close Full screen, Ready?:")
+                input("[-] @Next Video PAUSE. Please Close Full screen, Ready?:")
 
         # Next Page
         try:
